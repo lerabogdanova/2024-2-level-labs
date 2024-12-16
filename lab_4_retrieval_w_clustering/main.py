@@ -147,11 +147,6 @@ class DocumentVectorDB:
         self._tokenizer = Tokenizer(stop_words)
         self._vectorizer = BM25Vectorizer()
 
-        self._tokenizer = Tokenizer(stop_words)
-        self._vectorizer = BM25Vectorizer()
-        self.__documents = []
-        self.__vectors = {}
-
     def put_corpus(self, corpus: Corpus) -> None:
         """
         Fill documents and vectors based on corpus.
@@ -237,11 +232,6 @@ class DocumentVectorDB:
                 unique_indices.append(index)
         return [self.__documents[index] for index in unique_indices]
 
-        unique_documents = []
-        for index in indices:
-            if self.__documents[index] not in unique_documents:
-                unique_documents.append(self.__documents[index])
-        return unique_documents
 
 class VectorDBSearchEngine(BasicSearchEngine):
     """
@@ -293,16 +283,6 @@ class VectorDBSearchEngine(BasicSearchEngine):
             return_list.append((document[1], retrieved_documents[index]))
         return return_list
 
-        tokenized_query = self._db.get_tokenizer().tokenize(query)
-        query_vector = self._db.get_vectorizer().vectorize(tokenized_query)
-        vectors = [index[1] for index in self._db.get_vectors()]
-        if query_vector is None:
-            raise ValueError("Method returns None")
-        knn = self._calculate_knn(query_vector, vectors, n_neighbours)
-        if not knn:
-            raise ValueError("Method returns None")
-        relevant_documents = self._db.get_raw_documents(tuple([neighbor[0] for neighbor in knn]))
-        return [(neighbor[1], relevant_documents[index]) for index, neighbor in enumerate(knn)]
 
 class ClusterDTO:
     """
